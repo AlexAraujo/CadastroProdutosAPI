@@ -1,0 +1,143 @@
+<div class="d-flex">
+  <div class="form-inline mr-auto">
+    <div class="form-group mb-2"><br>
+      <h4 class="mr-2">Filtro:</h4> <input type="text" class="form-control mr-2" placeholder="buscar"
+      [(ngModel)]="filtrarLista">
+    </div>
+  </div>
+</div>
+<div>
+  <button class="btn btn-outline-primary"
+    (click)="novoProduto(templete)">
+    <i class="fa fa-plus-circle"></i>&nbsp;
+    Novo Evento
+  </button>
+</div>
+<br>
+<table class="table table-striped">
+  <thead class="thead-dark">
+    <tr>
+      <th>Código</th>
+      <th>Nome</th>
+      <th>Preço</th>
+      <th>Opções</th>
+    </tr>
+  </thead>
+  <tbody *ngIf="produtos && produtos.length">
+    <tr *ngFor="let produto of produtosFiltrados">
+      <td>{{produto.id}}</td>
+      <td>{{produto.nome}}</td>
+      <td>R$ {{produto.preco}}</td>
+      <td>
+        <div class="btn-group">
+          <button class="btn btn-sm btn-success"
+            tooltip="Editar" (click)="editarProduto(produto, templete)">
+            <i class="fa fa-edit"></i>
+          </button>
+          <button class="btn btn-sm btn-danger" tooltip="Excluir" (click)="excluirEvento(produto, confirm)">
+            <i class="fa fa-eraser"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+  <div class="card-footer pb-0 pt-3">
+    <jw-pagination [items]="produtos" (changePage)="onChangePage($event)"></jw-pagination>
+</div>
+  <tfoot *ngIf="!produtos.length">
+    <tr>
+      <td colspan="7" class="text-center">
+        <h4>
+          Nenhum evento encontrado!
+        </h4>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+<div bsModal #templete="bs-modal" class="modal fade" tabindex="-1"
+     role="dialog" aria-labelledby="dialog-sizes-name1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-sizes-name1" class="modal-title pull-left">Produto</h4>
+        <button type="button" class="btn-close close pull-right" (click)="templete.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="registerForm">
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label>Nome</label>
+              <input type="text" class="form-control"
+                [ngClass]="{'is-invalid': registerForm.get('nome')?.errors && registerForm.get('nome')?.touched}"
+                 formControlName="nome" placeholder="Nome">
+              <div *ngIf="registerForm.get('nome')?.hasError('required')
+                && registerForm.get('nome')?.touched" class="invalid-feedback">
+                Nome é obrigatório.
+              </div>
+              <div *ngIf="registerForm.get('nome')?.hasError('minlength')
+                && registerForm.get('nome')?.touched" class="invalid-feedback">
+                No mínimo 3 caracters.
+              </div>
+              <div *ngIf="registerForm.get('nome')?.hasError('maxlength')
+                && registerForm.get('nome')?.touched" class="invalid-feedback">
+                No máximo 40 caracters.
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-8">
+              <label>Preço</label>
+              <input type="text"
+                currencyMask
+                class="form-control"
+                [ngClass]="{'is-invalid': registerForm.get('preco')?.errors && registerForm.get('preco')?.touched}"
+                formControlName="preco" placeholder="R$ 0,00">
+              <div *ngIf="registerForm.get('preco')?.hasError('required')
+                && registerForm.get('preco')?.touched" class="invalid-feedback">
+                Preço é obrigatório.
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer d-flex">
+        <button class="btn btn-secondary" (click)="templete.hide()">
+          Fechar
+        </button>
+        <button class="btn btn-primary ml-auto" [disabled]="!registerForm.valid"
+          (click)="salvarAlteracao(templete)">
+          Salvar Alterações
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div bsModal #confirm="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1">
+	<div class="modal-dialog modal-sm">
+  		<div class="modal-content">
+    		<div class="modal-header">
+      			<h4 class="modal-title pull-left">
+        			Deletando Evento
+      			</h4>
+      			<button type="button" class="close pull-right" (click)="confirm.hide()" aria-label="Close">
+        			<span aria-hidden="true">&times;</span>
+      			</button>
+    		</div>
+    		<div class="modal-body">
+      			<p>{{bodyDeletarProdutos}}</p>
+    		</div>
+    		<div class="modal-footer btn-group d-flex">
+      			<button type="button" class="btn btn-outline-primary" (click)="confirm.hide()">
+        			CENCELAR
+      			</button>
+      			<button type="button" class="btn btn-outline-danger" (click)="confirmeDelete(confirm)">
+          		DELETAR
+        		</button>
+    		</div>
+  		</div>
+	</div>
+</div>
+<br>
+<br>
